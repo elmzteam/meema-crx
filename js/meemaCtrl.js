@@ -3,10 +3,10 @@
 angular.module('app').controller('meemaCtrl',
     ['$scope', 'meemaAuthService', 'meemaWebService',
     function ($scope, meemaAuthService, meemaWebService) {
-        $scope.connected = false;
+        $scope.connected = true;
         $scope.hasDevice = false;
-        $scope.accounts = [];
-        $scope.authenticated = false;
+        $scope.accounts = ['User 1', 'User 2', 'User 3'];
+        $scope.authenticated = true;
         $scope.inputs = null;
         $scope.canSave = false;
         $scope.pageUrl = null;
@@ -25,7 +25,8 @@ angular.module('app').controller('meemaCtrl',
         }; */
 
         $scope.initOptions = function() {
-            getUrl(function(url) {
+            $scope.inputs = [{"label":"Username or email","selector":"#id_username.text.long-field","type":"text","input_value":"test","save":true},{"label":"Password","selector":"#id_password.text.long-field","type":"password","input_value":"12345","save":false}];
+            /*getUrl(function(url) {
                 console.log('got url', url);
                 $scope.pageUrl = url;
                 var params = {
@@ -45,7 +46,7 @@ angular.module('app').controller('meemaCtrl',
                         }
                     }
                 });
-            });
+            });*/
         };
 
         $scope.save = function() {

@@ -9,50 +9,68 @@
 </head>
 <body ng-controller="meemaCtrl">
     <div id="not-authenticated" ng-hide="connected || authenticated">
-        <img class='meema-icon' src="img/meema.png">
+        <img class='meema-icon' src="img/meema1024.png">
         <p><b>Please plug in and authenticate your Meema key.</b></p>
     </div>
     <div id="authenticating" ng-show="connected && !authenticated">
         <div class="auth-container">
             <div class="list" ng-hide="attemptingLogin || attemptingNewUser">
-                <h3>Meema Login</h3>
-                <div class="account" ng-repeat="user in accounts" ng-click="showLogin(user)">
-                    {{user}}
-                </div>
-                <button ng-click="showNewUser()">Create New User</button>
+                <h1>Login</h1>
+                <md-list>
+                    <md-list-item class="md-2-line user" ng-repeat="user in accounts" ng-click="showLogin(user)">
+                        <div class="md-list-item-text text">
+                            <h4>{{user}}</h4>
+                        </div>
+                    </md-list-item>
+                </md-list>
+                <md-button class="new-user-button" ng-click="showNewUser()">Create New User</md-button>
             </div>
             <div class="login" ng-show="attemptingLogin">
-                <label for="login_username">Username</label>
-                <input id="login_username" type="text" value="{{loginUser}}" disabled>
-                <label for="login_password">Password</label>
-                <input id="login_password" type="password" ng-model="loginPassword">
-                <div class="button-container">
-                    <button ng-click="cancelLogin()">Back</button>
-                    <button ng-click="login()">Login</button>
+                <md-content layout-padding layout="column" class="login-input-container">
+                    <md-input-container class="login-input">
+                        <label>Username</label>
+                        <input ng-value="loginUser" ng-model="loginUser" disabled>
+                    </md-input-container>
+                    <md-input-container class="login-input">
+                        <label>Password</label>
+                        <input type="password" ng-model="loginPassword">
+                    </md-input-container>
+                </md-content>
+                <div class="login-button-container">
+                    <md-button class="back-button" ng-click="cancelLogin()">Back</md-button>
+                    <md-button class="login-button" ng-click="login()">Login</md-button>
                 </div>
             </div>
             <div class="newuser" ng-show="attemptingNewUser">
-                <label for="newuser_username">Username</label>
-                <input id="newuser_username" type="text" ng-model="newUserUsername">
-                <label for="newuser_password">Password</label>
-                <input id="newuser_password" type="password" ng-model="newUserPassword">
-                <div class="button-container">
-                    <button ng-click="cancelNewUser()">Back</button>
-                    <button ng-click="newUser()">Create</button>
+                <md-content layout-padding layout="column" class="newuser-input-container">
+                    <md-input-container class="newuser-input">
+                        <label>Username</label>
+                        <input ng-model="newUserUsername">
+                    </md-input-container>
+                    <md-input-container class="newuser-input">
+                        <label>Password</label>
+                        <input type="password" ng-model="newUserPassword">
+                    </md-input-container>
+                </md-content>
+                <div class="newuser-button-container">
+                    <md-button class="back-button" ng-click="cancelNewUser()">Back</md-button>
+                    <md-button class="create-button" ng-click="newUser()">Create</md-button>
                 </div>
             </div>
         </div>
     </div>
-    <div id="authenticated" ng-if="authenticated" ng-init="initOptions()">
-        <div class="input-container" ng-repeat="input in inputs">
-            <input id="{{input.selector}}-save" type="checkbox" ng-model="inputs[$index].save">
-            <label for="{{input.selector}}">{{input.label}}</label>
-            <input id="{{input.selector}}" type="{{input.type}}" ng-model="inputs[$index].input_value"
-                   ng-disabled="!inputs[$index].save && inputs[$index].input_value != ''"
-                   ng-click="inputs[$index].save = true">
+    <div id="authenticated" ng-if="authenticated" ng-init="initOptions()" layout="column">
+        <div class="input-container" ng-repeat="input in inputs" layout="row">
+            <md-switch ng-model="inputs[$index].save" aria-label="Save"></md-switch>
+            <md-input-container class="input-input">
+                <label>{{input.label}}</label>
+                <input type="{{input.type}}" ng-model="inputs[$index].input_value"
+                        ng-disabled="!inputs[$index].save && inputs[$index].input_value != ''"
+                        ng-click="inputs[$index].save = true">
+            </md-input-container>
         </div>
-        <div class="button-container">
-            <button class="save" ng-click="save()">Save</button>
+        <div class="save-button-container">
+            <md-button class="save-button" ng-click="save()">Save</md-button>
         </div>
     </div>
 

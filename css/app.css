@@ -5,3 +5,76 @@ html {
 body {
   min-width: 200px;
   padding: 5px 20px 15px 20px; }
+
+#not-authenticated {
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  min-width: 240px; }
+  #not-authenticated .meema-icon {
+    height: 100px; }
+  #not-authenticated p {
+    font-size: 1rem; }
+
+#authenticating .auth-container .list {
+  text-align: center; }
+  #authenticating .auth-container .list h1 {
+    text-align: center;
+    margin-bottom: 0; }
+  #authenticating .auth-container .list .user {
+    text-align: center; }
+    #authenticating .auth-container .list .user .text {
+      padding: 12px 0; }
+  #authenticating .auth-container .list .user:not(:last-child) {
+    border-bottom: 1px solid #E0E0E0; }
+  #authenticating .auth-container .list .new-user-button.md-button:not([disabled]):hover {
+    background-color: rgba(0, 128, 0, 0.2); }
+  #authenticating .auth-container .list .new-user-button {
+    color: green;
+    padding: 0 20px 0 20px; }
+
+#authenticating .auth-container .login .login-input-container {
+  margin-top: 10px; }
+
+#authenticating .auth-container .login .login-input {
+  padding-bottom: 10px; }
+
+#authenticating .auth-container .login .login-button-container {
+  text-align: center;
+  width: 100%; }
+  #authenticating .auth-container .login .login-button-container .back-button, #authenticating .auth-container .login .login-button-container .login-button {
+    display: inline-block;
+    margin: 0 0 10px 0; }
+  #authenticating .auth-container .login .login-button-container .back-button {
+    color: red; }
+  #authenticating .auth-container .login .login-button-container .login-button {
+    color: darkblue; }
+
+#authenticating .auth-container .newuser .newuser-input-container {
+  margin-top: 10px; }
+
+#authenticating .auth-container .newuser .newuser-input {
+  padding-bottom: 10px; }
+
+#authenticating .auth-container .newuser .newuser-button-container {
+  text-align: center;
+  width: 100%; }
+  #authenticating .auth-container .newuser .newuser-button-container .back-button, #authenticating .auth-container .newuser .newuser-button-container .create-button {
+    display: inline-block;
+    margin: 0 0 10px 0; }
+  #authenticating .auth-container .newuser .newuser-button-container .back-button {
+    color: red; }
+  #authenticating .auth-container .newuser .newuser-button-container .create-button {
+    color: green; }
+
+a.md-button:not([disabled]).md-focused,
+.md-button:not([disabled]).md-focused {
+  background-color: #fff; }
+
+#authenticated {
+  padding-top: 10px; }
+  #authenticated .save-button-container {
+    text-align: center; }
+    #authenticated .save-button-container .save-button {
+      padding: 0 50px 0 50px;
+      color: green; }

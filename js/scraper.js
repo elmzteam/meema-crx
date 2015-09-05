@@ -89,8 +89,10 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         sendResponse({data: response});
     } else if (request.action == "fill") {
         for (var j = 0; j < request.data.length; j++) {
-            $(request.data[j].selector).val(request.data[j].input_value);
-            $(request.data[j].selector).css("background-color", "rgba(10, 10, 200, 0.2)");
+            if (request.data[j].save) {
+                $(request.data[j].selector).val(request.data[j].input_value);
+                $(request.data[j].selector).css("background-color", "rgba(10, 10, 200, 0.2)");
+            }
         }
         sendResponse({finished: true});
     } else {

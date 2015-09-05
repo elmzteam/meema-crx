@@ -6,23 +6,53 @@ angular.module('app').controller('meemaCtrl',
         $scope.test = 'TEST';
         $scope.authenticated = true; // REMOVE
         $scope.inputs = null;
+        $scope.canSave = false;
+        $scope.pageUrl = null;
+        // TEST USER
+        $scope.user = {
+            hardware_id: 'abc',
+            password: 'pw'
+        };
 
         $scope.initOptions = function() {
             getUrl(function(url) {
-                var fakeparams = {
-                    password: '',
-                    hardware_id: '',
-                    url: url
+                $scope.pageUrl = url;
+                var params = {
+                    password: $scope.user.password,
+                    hardware_id: $scope.user.hardware_id,
+                    url: hashCode($scope.pageUrl)
                 };
-                meemaWebService.getPage(fakeparams, function(error, exists, data) {
+                meemaWebService.getPage(params, function(error, exists, data) {
                     if (!error) {
                         if (exists) {
-                            fillPage(data);
+                            $scope.inputs = data;
+                            fillPage($scope.inputs);
                         } else {
                             scrapePage();
                         }
                     }
                 });
+            });
+        };
+
+        $scope.save = function() {
+            if ($scope.canSave) {
+                fillPage($scope.inputs);
+                var params = {
+                    password: $scope.user.password,
+                    hardware_id: $scope.user.hardware_id,
+                    url: hashCode($scope.pageUrl),
+                    store: $scope.inputs
+                };
+                meemaWebService.putPage(params, function(error) {
+                    console.log(error ? 'Error!' : 'Success!');
+                });
+            }
+        };
+
+        $scope.checkAccount = function(id) {
+            meemaWebService.checkAccount({hardware_id: id}, function(error, data) {
+                console.log(data);
             });
         };
 
@@ -39,7 +69,7 @@ angular.module('app').controller('meemaCtrl',
                 // Send a request to the content script.
                 chrome.tabs.sendRequest(tabs[0].id, {action: "fill", data: data}, function(response) {
                     $scope.$apply(function() {
-                        // Finish code
+                        $scope.canSave = true;
                     });
                 });
             });
@@ -52,9 +82,21 @@ angular.module('app').controller('meemaCtrl',
                 chrome.tabs.sendRequest(tabs[0].id, {action: "scrape"}, function(response) {
                     $scope.$apply(function() {
                         $scope.inputs = response.data;
+                        $scope.canSave = true;
                     });
                 });
             });
+        };
+
+        var hashCode = function(str) {
+            var hash = 0, i, chr, len;
+            if (str.length == 0) return hash;
+            for (i = 0, len = str.length; i < len; i++) {
+                chr   = str.charCodeAt(i);
+                hash  = ((hash << 5) - hash) + chr;
+                hash |= 0; // Convert to 32bit integer
+            }
+            return hash;
         };
     }
 ]);

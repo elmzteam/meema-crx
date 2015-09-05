@@ -12,10 +12,12 @@
         <div class="input-container" ng-repeat="input in inputs">
             <input id="{{input.selector}}-save" type="checkbox" ng-model="inputs[$index].save">
             <label for="{{input.selector}}">{{input.label}}</label>
-            <input id="{{input.selector}}" type="{{input.type}}" ng-model="inputs[$index].input_value">
+            <input id="{{input.selector}}" type="{{input.type}}" ng-model="inputs[$index].input_value"
+                   ng-disabled="!inputs[$index].save && inputs[$index].input_value != ''"
+                   ng-click="inputs[$index].save = true">
         </div>
         <div class="button-container">
-            <button class="save">Save</button>
+            <button class="save" ng-click="save()">Save</button>
         </div>
     </div>
 

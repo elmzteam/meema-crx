@@ -79,11 +79,17 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
             response.push({
                 label: name,
                 selector: selector,
-                type: inputs[i].type
+                type: inputs[i].type,
+                input_value: $(inputs[i]).val()
             });
         }
-        sendResponse({res: response});
+        console.log(JSON.stringify(response));
+        sendResponse({data: response});
     } else if (request.action == "fill") {
+        for (var j = 0; j < request.data.length; j++) {
+            $(request.data[j].selector).val(request.data[j].input_value);
+            $(request.data[j].selector).css("background-color", "rgba(10, 10, 200, 0.2)");
+        }
         sendResponse({finished: true});
     } else {
         sendResponse({error: 'Not a recognized action.'}); // Send nothing..

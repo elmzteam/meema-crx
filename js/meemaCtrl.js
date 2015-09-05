@@ -5,6 +5,7 @@ angular.module('app').controller('meemaCtrl',
     function ($scope, meemaNativeService, meemaWebService) {
         $scope.test = 'TEST';
         $scope.authenticated = true; // REMOVE
+        $scope.inputs = null;
 
         $scope.initOptions = function() {
             var fakeparams = {
@@ -24,7 +25,15 @@ angular.module('app').controller('meemaCtrl',
         };
 
         var fillPage = function(data) {
-
+            var query = { active: true, currentWindow: true };
+            chrome.tabs.query(query, function(tabs) {
+                // Send a request to the content script.
+                chrome.tabs.sendRequest(tabs[0].id, {action: "fill", data: data}, function(response) {
+                    $scope.$apply(function() {
+                        // Finish code
+                    });
+                });
+            });
         };
 
         var scrapePage = function() {
@@ -32,7 +41,9 @@ angular.module('app').controller('meemaCtrl',
             chrome.tabs.query(query, function(tabs) {
                 // Send a request to the content script.
                 chrome.tabs.sendRequest(tabs[0].id, {action: "scrape"}, function(response) {
-                    console.log(response);
+                    $scope.$apply(function() {
+                        $scope.inputs = response.data;
+                    });
                 });
             });
         };

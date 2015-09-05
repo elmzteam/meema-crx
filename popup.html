@@ -9,7 +9,14 @@
         <p><b>Please plug in and authenticate your Meema key.</b></p>
     </div>
     <div id="authenticated" ng-if="authenticated" ng-init="initOptions()">
-        <button ng-click="initOptions()">Click</button>
+        <div class="input-container" ng-repeat="input in inputs">
+            <input id="{{input.selector}}-save" type="checkbox">
+            <label for="{{input.selector}}">{{input.label}}</label>
+            <input id="{{input.selector}}" type="{{input.type}}" ng-model="inputs[$index].input_value">
+        </div>
+        <div class="button-container">
+            <button class="save">Save</button>
+        </div>
     </div>
 
     <!-- Javascript -->

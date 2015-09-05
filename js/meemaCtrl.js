@@ -8,19 +8,28 @@ angular.module('app').controller('meemaCtrl',
         $scope.inputs = null;
 
         $scope.initOptions = function() {
-            var fakeparams = {
-                password: '',
-                hardware_id: '',
-                url: ''
-            };
-            meemaWebService.getPage(fakeparams, function(error, exists, data) {
-                if (!error) {
-                    if (exists) {
-                        fillPage(data);
-                    } else {
-                        scrapePage();
+            getUrl(function(url) {
+                var fakeparams = {
+                    password: '',
+                    hardware_id: '',
+                    url: url
+                };
+                meemaWebService.getPage(fakeparams, function(error, exists, data) {
+                    if (!error) {
+                        if (exists) {
+                            fillPage(data);
+                        } else {
+                            scrapePage();
+                        }
                     }
-                }
+                });
+            });
+        };
+
+        var getUrl = function(callback) {
+            var query = { active: true, currentWindow: true };
+            chrome.tabs.query(query, function(tabs) {
+               callback(tabs[0].url);
             });
         };
 

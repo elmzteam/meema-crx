@@ -10,7 +10,7 @@
     </div>
     <div id="authenticated" ng-if="authenticated" ng-init="initOptions()">
         <div class="input-container" ng-repeat="input in inputs">
-            <input id="{{input.selector}}-save" type="checkbox">
+            <input id="{{input.selector}}-save" type="checkbox" ng-model="inputs[$index].save">
             <label for="{{input.selector}}">{{input.label}}</label>
             <input id="{{input.selector}}" type="{{input.type}}" ng-model="inputs[$index].input_value">
         </div>

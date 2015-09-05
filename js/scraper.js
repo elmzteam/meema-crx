@@ -65,6 +65,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         for (i = 0; i < inputs.length; i++) {
             var selector = getSelector($(inputs[i]));
             var name = getText($(labels[i]));
+            var input_value = $(inputs[i]).val();
             if (name == "") {
                 if (inputs[i].placeholder) {
                     name = inputs[i].placeholder;
@@ -80,10 +81,11 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
                 label: name,
                 selector: selector,
                 type: inputs[i].type,
-                input_value: $(inputs[i]).val()
+                input_value: input_value,
+                save: input_value != ""
             });
         }
-        console.log(JSON.stringify(response));
+        //console.log(JSON.stringify(response));
         sendResponse({data: response});
     } else if (request.action == "fill") {
         for (var j = 0; j < request.data.length; j++) {

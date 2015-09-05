@@ -15,7 +15,7 @@ angular.module('app').service('meemaWebService',
                 });
             */
             var fakedata = [{"label":"Username or email","selector":"#id_username.text.long-field","type":"text","input_value":"test"},{"label":"Password","selector":"#id_password.text.long-field","type":"password","input_value":"12345"}];
-            callback(null, true, fakedata);
+            callback(null, false, fakedata);
         }
     }
 ]);

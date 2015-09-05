@@ -3,8 +3,7 @@
 angular.module('app').controller('meemaCtrl',
     ['$scope', 'meemaDeviceService', 'meemaWebService',
     function ($scope, meemaNativeService, meemaWebService) {
-        $scope.test = 'TEST';
-        $scope.authenticated = true; // REMOVE
+        $scope.authenticated = false;
         $scope.inputs = null;
         $scope.canSave = false;
         $scope.pageUrl = null;
@@ -12,6 +11,10 @@ angular.module('app').controller('meemaCtrl',
         $scope.user = {
             hardware_id: 'abc',
             password: 'pw'
+        };
+
+        $scope.authenticate = function() {
+
         };
 
         $scope.initOptions = function() {
@@ -98,5 +101,7 @@ angular.module('app').controller('meemaCtrl',
             }
             return hash;
         };
+
+        $scope.authenticate();
     }
 ]);

@@ -7,8 +7,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
 </head>
 <body ng-controller="meemaCtrl">
-    <div id="not-authenticated" ng-hide="authenticated">
+    <div id="not-authenticated" ng-hide="connected || authenticated">
         <p><b>Please plug in and authenticate your Meema key.</b></p>
+    </div>
+    <div id="authenticating" ng-show="connected && !authenticated">
+        <div class="auth-container">
+            <h3>Authenticating Meema key</h3>
+        </div>
     </div>
     <div id="authenticated" ng-if="authenticated" ng-init="initOptions()">
         <div class="input-container" ng-repeat="input in inputs">
@@ -31,7 +36,7 @@
     <script type="text/javascript" src="lib/angular-material.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/meemaCtrl.js"></script>
-    <script type="text/javascript" src="js/meemaDeviceService.js"></script>
+    <script type="text/javascript" src="js/meemaAuthService.js"></script>
     <script type="text/javascript" src="js/meemaWebService.js"></script>
 </body>
 </html>

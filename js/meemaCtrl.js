@@ -1,21 +1,19 @@
 'use strict';
 
 angular.module('app').controller('meemaCtrl',
-    ['$scope', 'meemaDeviceService', 'meemaWebService',
-    function ($scope, meemaNativeService, meemaWebService) {
+    ['$scope', 'meemaAuthService', 'meemaWebService',
+    function ($scope, meemaAuthService, meemaWebService) {
+        $scope.connected = false;
         $scope.authenticated = false;
         $scope.inputs = null;
         $scope.canSave = false;
         $scope.pageUrl = null;
+        $scope.user = {};
         // TEST USER
-        $scope.user = {
+        /* $scope.user = {
             hardware_id: 'abc',
             password: 'pw'
-        };
-
-        $scope.authenticate = function() {
-
-        };
+        }; */
 
         $scope.initOptions = function() {
             getUrl(function(url) {
@@ -57,6 +55,15 @@ angular.module('app').controller('meemaCtrl',
             meemaWebService.checkAccount({hardware_id: id}, function(error, data) {
                 console.log(data);
             });
+        };
+
+        var onConnectionLoaded = function(error, res) {
+            if (!error) {
+                console.log('started connection');
+                $scope.connected = true;
+            } else {
+                console.log('Error!', res.error);
+            }
         };
 
         var getUrl = function(callback) {
@@ -102,6 +109,16 @@ angular.module('app').controller('meemaCtrl',
             return hash;
         };
 
-        $scope.authenticate();
+        var init = function() {
+            console.log('initing');
+            meemaAuthService.getMeemaApp(function(error, maID) {
+                if (!error) {
+                    console.log('geot meema app id', maID);
+                    meemaAuthService.startConnection(onConnectionLoaded);
+                }
+            })
+        };
+
+        init();
     }
 ]);

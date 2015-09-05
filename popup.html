@@ -12,10 +12,10 @@
     </div>
     <div id="authenticating" ng-show="connected && !authenticated">
         <div class="auth-container">
-            <div class="list" ng-hide="login && newuser">
+            <div class="list" ng-hide="attemptingLogin || attemptingNewUser">
                 <h3>Authenticate your Meema key</h3>
                 <div class="account" ng-repeat="user in accounts" ng-click="showLogin(user)">
-                    {{account.username}}
+                    {{user}}
                 </div>
                 <button ng-click="showNewUser()">Create New User</button>
             </div>

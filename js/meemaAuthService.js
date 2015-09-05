@@ -16,9 +16,9 @@ angular.module('app').service('meemaAuthService',
 
         this.startConnection = function(callback) {
             console.log('authservice start connection');
-            chrome.runtime.sendMessage(this.meemaAppID, {command: 'onLoad', args: []}, {}, function(res) {
+            chrome.runtime.sendMessage(this.meemaAppID, {command: 'connect', args: []}, {}, function(res) {
                 console.log(arguments);
-                if (!res.error) {
+                if (!res.error && res.result) {
                     this.connectionLoaded = true;
                     callback(null, true);
                 } else {
@@ -41,7 +41,8 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.isUnlocked = function(callback) {
-            chrome.runtime.sendMessage(this.meemaAppId, {command: 'isUnlocked', args: []}, {}, function(res) {
+            console.log('authservice running is unlocked');
+            chrome.runtime.sendMessage(this.meemaAppID, {command: 'isUnlocked', args: []}, {}, function(res) {
                 if (!res.error) {
                     callback(null, res.result);
                 } else {
@@ -51,7 +52,7 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.getActiveAccount = function(callback) {
-            chrome.runtime.sendMessage(this.meemaAppId, {command: 'getActiveAccount', args: []}, {}, function(res) {
+            chrome.runtime.sendMessage(this.meemaAppID, {command: 'getActiveAccount', args: []}, {}, function(res) {
                 if (!res.error) {
                     this.meemaActiveAccount = res.result;
                     callback(null, this.meemaActiveAccount);
@@ -62,7 +63,8 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.getAccounts = function(callback) {
-            chrome.runtime.sendMessage(this.meemaAppId, {command: 'getAccounts', args: []}, {}, function(res) {
+            console.log('authservice getting accounts');
+            chrome.runtime.sendMessage(this.meemaAppID, {command: 'getAccounts', args: []}, {}, function(res) {
                 if (!res.error) {
                     this.meemaAccounts = res.result;
                     callback(null, this.meemaAccounts);
@@ -73,8 +75,10 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.authenticateAccount = function(account, callback) {
-            chrome.runtime.sendMessage(this.meemaAppId,
+            console.log('authservice authenticating account');
+            chrome.runtime.sendMessage(this.meemaAppID,
                 {command: 'authenticateAccount', args: [account.username, account.password]}, {}, function(res) {
+                    console.log('callback of authservice authentication', res);
                     if (!res.error) {
                         callback(null, res.result);
                     } else {
@@ -84,7 +88,7 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.fetchFragment = function(hashedUrl, callback) {
-            chrome.runtime.sendMessage(this.meemaAppId, {command: 'fetchFragment', args: [hashedUrl]}, {}, function(res) {
+            chrome.runtime.sendMessage(this.meemaAppID, {command: 'fetchFragment', args: [hashedUrl]}, {}, function(res) {
                 if (!res.error) {
                     callback(null, res.result);
                 } else {
@@ -94,7 +98,7 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.fetchFragmentList = function(callback) {
-            chrome.runtime.sendMessage(this.meemaAppId, {command: 'fetchFragmentList', args: []}, {}, function(res) {
+            chrome.runtime.sendMessage(this.meemaAppID, {command: 'fetchFragmentList', args: []}, {}, function(res) {
                 if (!res.error) {
                     this.meemaFragmentList = res.result;
                     callback(null, this.meemaFragmentList);
@@ -105,7 +109,7 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.createAccount = function(account, callback) {
-            chrome.runtime.sendMessage(this.meemaAppId,
+            chrome.runtime.sendMessage(this.meemaAppID,
                 {command: 'createAccount', args: [account.username, account.password]}, {}, function(res) {
                     if (!res.error) {
                         callback(null, res.result);
@@ -116,7 +120,7 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.registerPassword = function(hashedUrl, pwdFrag, callback) {
-            chrome.runtime.sendMessage(this.meemaAppId,
+            chrome.runtime.sendMessage(this.meemaAppID,
                 {command: 'registerPassword', args: [hashedUrl, pwdFrag]}, {}, function(res) {
                     if (!res.error) {
                         callback(null, res.result);

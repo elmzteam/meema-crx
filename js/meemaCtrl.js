@@ -117,7 +117,9 @@ angular.module('app').controller('meemaCtrl',
         var onConnectionLoaded = function(error, res) {
             if (!error) {
                 console.log('started connection', meemaAuthService.connectionLoaded);
-                $scope.connected = meemaAuthService.connectionLoaded;
+                $scope.$apply(function() {
+                    $scope.connected = meemaAuthService.connectionLoaded;
+                });
                 meemaAuthService.getDevice(onGetDevice);
             } else {
                 console.log('Error!', res.error);
@@ -140,9 +142,13 @@ angular.module('app').controller('meemaCtrl',
                 meemaAuthService.authenticateAccount(account, function(error, res) {
                    if (!error) {
                        if (res) {
-                           $scope.user = account;
-                           $scope.authenticated = true;
+                           console.log('authenticated!');
+                           $scope.$apply(function() {
+                               $scope.user = account;
+                               $scope.authenticated = true;
+                           });
                        } else {
+                           console.log('not authenticated, getting list of accounts');
                            getAccounts();
                        }
                    } else {
@@ -158,8 +164,10 @@ angular.module('app').controller('meemaCtrl',
                             meemaAuthService.getActiveAccount(function(error, res) {
                                 if (!error) {
                                     console.log('got active account, authenticated');
-                                    $scope.user = meemaAuthService.meemaActiveAccount;
-                                    $scope.authenticated = true;
+                                    $scope.$apply(function() {
+                                        $scope.user = meemaAuthService.meemaActiveAccount;
+                                        $scope.authenticated = true;
+                                    });
                                 } else {
                                     console.log('Error!', res.error);
                                 }
@@ -180,7 +188,10 @@ angular.module('app').controller('meemaCtrl',
             console.log('getting accounts');
             meemaAuthService.getAccounts(function(error, res) {
                 if (!error) {
-                    $scope.accounts = meemaAuthService.meemaAccounts;
+                    console.log('got accounts', meemaAuthService.meemaAccounts);
+                    $scope.$apply(function() {
+                        $scope.accounts = meemaAuthService.meemaAccounts;
+                    });
                 } else {
                     console.log('Error!', res.error);
                 }

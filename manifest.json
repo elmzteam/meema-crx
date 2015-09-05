@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+  "name": "Meema",
+  "version": "0.0.1",
+  "icons": {
+    "128":"img/testicon.png"
+  },
+  "browser_action": {
+    "default_icon":  "img/testicon.png",
+    "default_title": "Meema",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "bookmarks",
+    "http://*/*",
+    "https://*/*",
+    "<all_urls>"
+  ]
+}

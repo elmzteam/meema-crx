@@ -31,10 +31,21 @@ var getText = function(jqobject) {
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.action == "scrape") {
-        var allInputs = $("form input").not("[type='hidden']");
+        var forms = $("form");
+        var allInputs = null;
+        for (var i = 0; i < forms.length; i++) {
+            var text = $('<div>').append($(forms[i]).clone()).html();
+            if (text.indexOf('login') >= 0 || text.indexOf('Login') >= 0) {
+                allInputs = $(forms[i]).find("input[type='text'], input[type='password'], input[type='email'], input[type='number']");
+                break;
+            }
+        }
+        if (!allInputs) {
+            allInputs = $("form input[type='text'], form input[type='password'], form input[type='email'], form input[type='number']");
+        }
         var inputs = [];
         var labels = [];
-        for (var i = 0; i < allInputs.length; i++) {
+        for (i = 0; i < allInputs.length; i++) {
             if ($(allInputs[i]).is(":visible")) {
                 inputs.push(allInputs[i]);
                 var label = $('label[for="' + $(allInputs[i]).attr('id') + '"]');
@@ -50,16 +61,27 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
                 }
             }
         }
-        console.log(inputs, labels);
         var response = [];
         for (i = 0; i < inputs.length; i++) {
+            var selector = getSelector($(inputs[i]));
+            var name = getText($(labels[i]));
+            if (name == "") {
+                if (inputs[i].placeholder) {
+                    name = inputs[i].placeholder;
+                } else if (selector.indexOf('Username') >=0 || selector.indexOf('username') >= 0) {
+                    name = "Username";
+                } else if (selector.indexOf('Password') >=0 || selector.indexOf('password') >= 0) {
+                    name = "Password";
+                } else {
+                    name = "Input #" + i;
+                }
+            }
             response.push({
-                label: getText($(labels[i])),
-                selector: getSelector($(inputs[i])),
+                label: name,
+                selector: selector,
                 type: inputs[i].type
             });
         }
-        console.log(response);
         sendResponse({res: response});
     } else if (request.action == "fill") {
         sendResponse({finished: true});

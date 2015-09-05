@@ -92,6 +92,9 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
             if (request.data[j].save) {
                 $(request.data[j].selector).val(request.data[j].input_value);
                 $(request.data[j].selector).css("background-color", "rgba(10, 10, 200, 0.2)");
+            } else {
+                $(request.data[j].selector).val('');
+                $(request.data[j].selector).css("background-color", "");
             }
         }
         sendResponse({finished: true});

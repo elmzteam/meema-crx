@@ -1,0 +1,7 @@
+html {
+  max-height: 50%;
+  min-height: 30%; }
+
+body {
+  min-width: 200px;
+  padding: 5px 20px 15px 20px; }

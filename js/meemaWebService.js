@@ -9,6 +9,7 @@ angular.module('app').service('meemaWebService',
                 }).bind(this))
                 .error(function(data, status, headers, config) {
                     if (status == 400) {
+                        console.log('400 get page');
                         callback(null, false);
                     } else {
                         callback(true);

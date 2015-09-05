@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <title>Meema</title>
     <link rel="stylesheet" href="lib/angular-material.css">
+    <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
 </head>
 <body ng-controller="meemaCtrl">
     <div id="not-authenticated" ng-hide="connected || authenticated">
+        <img class='meema-icon' src="img/meema.png">
         <p><b>Please plug in and authenticate your Meema key.</b></p>
     </div>
     <div id="authenticating" ng-show="connected && !authenticated">
         <div class="auth-container">
             <div class="list" ng-hide="attemptingLogin || attemptingNewUser">
-                <h3>Authenticate your Meema key</h3>
+                <h3>Meema Login</h3>
                 <div class="account" ng-repeat="user in accounts" ng-click="showLogin(user)">
                     {{user}}
                 </div>

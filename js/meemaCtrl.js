@@ -26,13 +26,15 @@ angular.module('app').controller('meemaCtrl',
 
         $scope.initOptions = function() {
             getUrl(function(url) {
+                console.log('got url', url);
                 $scope.pageUrl = url;
                 var params = {
                     username: $scope.user.username,
                     password: $scope.user.password,
-                    hardware_id: $scope.user.hardware_id,
+                    hardware_id: meemaAuthService.meemaHardwareID,
                     url: hashCode($scope.pageUrl)
                 };
+                console.log('req params', params);
                 meemaWebService.getPage(params, function(error, exists, data) {
                     if (!error) {
                         if (exists) {
@@ -50,8 +52,9 @@ angular.module('app').controller('meemaCtrl',
             if ($scope.canSave) {
                 fillPage($scope.inputs);
                 var params = {
+                    username: $scope.user.username,
                     password: $scope.user.password,
-                    hardware_id: $scope.user.hardware_id,
+                    hardware_id: meemaAuthService.meemaHardwareID,
                     url: hashCode($scope.pageUrl),
                     store: $scope.inputs
                 };
@@ -94,17 +97,36 @@ angular.module('app').controller('meemaCtrl',
             if ($scope.accounts.indexOf($scope.newUserUsername) < 0) {
                 var newUser = {
                     username: $scope.newUserUsername,
-                    password: $scope.newUserPassword
+                    password: $scope.newUserPassword,
+                    hardware_id: meemaAuthService.meemaHardwareID
                 };
-                meemaAuthService.createAccount(newUser, function(error, res) {
-                    if (!error && res) {
-                        authenticate(newUser);
+                meemaWebService.checkAccount(newUser, function(error, exists) {
+                    if (!error && !exists) {
+                        meemaWebService.newAccount(newUser, function(error) {
+                            if (!error) {
+                                console.log('Created web account!');
+                            } else {
+                                console.log('Error! Was not able to create web account');
+                            }
+                        });
+                        meemaAuthService.createAccount(newUser, function(error, res) {
+                            if (!error && res) {
+                                console.log('Created Meema key account!');
+                                authenticate(newUser);
+                            } else {
+                                console.log('Error!', res.error);
+                            }
+                        });
                     } else {
-                        console.log('Error!', res.error);
+                        if (error) {
+                            console.log('Error!');
+                        } else {
+                            console.log('Account exists already online!');
+                        }
                     }
-                })
+                });
             } else {
-                console.log('This username already exists');
+                console.log('This username already exists locally');
             }
         };
 
@@ -163,7 +185,7 @@ angular.module('app').controller('meemaCtrl',
                             console.log('is unlocked');
                             meemaAuthService.getActiveAccount(function(error, res) {
                                 if (!error) {
-                                    console.log('got active account, authenticated');
+                                    console.log('got active account, authenticated', res);
                                     $scope.$apply(function() {
                                         $scope.user = meemaAuthService.meemaActiveAccount;
                                         $scope.authenticated = true;
@@ -212,6 +234,7 @@ angular.module('app').controller('meemaCtrl',
         };
 
         var getUrl = function(callback) {
+            console.log('getting url');
             var query = { active: true, currentWindow: true };
             chrome.tabs.query(query, function(tabs) {
                callback(tabs[0].url);

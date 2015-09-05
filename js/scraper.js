@@ -31,6 +31,7 @@ var getText = function(jqobject) {
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.action == "scrape") {
+        console.log('scraping');
         var forms = $("form");
         var allInputs = null;
         for (var i = 0; i < forms.length; i++) {
@@ -85,6 +86,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
                 save: input_value != ""
             });
         }
+        console.log(response);
         //console.log(JSON.stringify(response));
         sendResponse({data: response});
     } else if (request.action == "fill") {

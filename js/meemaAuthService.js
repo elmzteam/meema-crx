@@ -52,7 +52,9 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.getActiveAccount = function(callback) {
+            console.log('authservice getting active account');
             chrome.runtime.sendMessage(this.meemaAppID, {command: 'getActiveAccount', args: []}, {}, function(res) {
+                console.log('callback of get active account', res);
                 if (!res.error) {
                     this.meemaActiveAccount = res.result;
                     callback(null, this.meemaActiveAccount);

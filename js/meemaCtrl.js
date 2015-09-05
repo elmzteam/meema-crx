@@ -3,16 +3,16 @@
 angular.module('app').controller('meemaCtrl',
     ['$scope', 'meemaAuthService', 'meemaWebService',
     function ($scope, meemaAuthService, meemaWebService) {
-        $scope.connected = false;
-        $scope.hasDevice = false;
+        $scope.connected = true;
+        $scope.hasDevice = true;
         $scope.accounts = [];
-        $scope.authenticated = false;
+        $scope.authenticated = true;
         $scope.inputs = null;
         $scope.canSave = false;
         $scope.pageUrl = null;
         $scope.user = {};
-        $scope.loginUser = '';
-        $scope.loginPassword = '';
+        $scope.loginUser = 'scrapelucas';
+        $scope.loginPassword = 'test';
         $scope.newUserUsername = '';
         $scope.newUserPassword = '';
         $scope.attemptingLogin = false;
@@ -38,9 +38,11 @@ angular.module('app').controller('meemaCtrl',
                 meemaWebService.getPage(params, function(error, exists, data) {
                     if (!error) {
                         if (exists) {
+                            console.log('page exists in memory');
                             $scope.inputs = data;
                             fillPage($scope.inputs);
                         } else {
+                            console.log('page does not exist in memory');
                             scrapePage();
                         }
                     }
@@ -256,8 +258,10 @@ angular.module('app').controller('meemaCtrl',
         var scrapePage = function() {
             var query = { active: true, currentWindow: true };
             chrome.tabs.query(query, function(tabs) {
+                console.log('scrape page req');
                 // Send a request to the content script.
                 chrome.tabs.sendRequest(tabs[0].id, {action: "scrape"}, function(response) {
+                    console.log('returned from scrape', response);
                     $scope.$apply(function() {
                         $scope.inputs = response.data;
                         $scope.canSave = true;

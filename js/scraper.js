@@ -33,16 +33,21 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.action == "scrape") {
         console.log('scraping');
         var forms = $("form");
-        var allInputs = null;
+        console.log('forms', forms);
+        var allInputs = [];
         for (var i = 0; i < forms.length; i++) {
             var text = $('<div>').append($(forms[i]).clone()).html();
             if (text.indexOf('login') >= 0 || text.indexOf('Login') >= 0) {
-                allInputs = $(forms[i]).find("input[type='text'], input[type='password'], input[type='email'], input[type='number']");
-                break;
+                var ins = $(forms[i]).find("input[type='text'], input[type='password'], input[type='email'], input[type='number']");
+                for (var k = 0; k < ins.length; k++) {
+                    allInputs.push(ins[k]);
+                }
+                console.log('found form with login text', allInputs);
             }
         }
-        if (!allInputs) {
+        if (allInputs.length == 0) {
             allInputs = $("form input[type='text'], form input[type='password'], form input[type='email'], form input[type='number']");
+            console.log('allinputs normal', allInputs);
         }
         var inputs = [];
         var labels = [];
@@ -62,6 +67,8 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
                 }
             }
         }
+        console.log('inputs', inputs);
+        console.log('labels', labels);
         var response = [];
         for (i = 0; i < inputs.length; i++) {
             var selector = getSelector($(inputs[i]));

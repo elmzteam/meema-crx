@@ -5,13 +5,19 @@
     <title>Meema</title>
 </head>
 <body ng-controller="meemaCtrl">
-    <h1>Meema</h1>
-    <div>{{test}}</div>
+    <div id="not-authenticated" ng-hide="authenticated">
+        <p><b>Please plug in and authenticate your Meema key.</b></p>
+    </div>
+    <div id="authenticated" ng-if="authenticated" ng-init="initOptions()">
+        <button ng-click="initOptions()">Click</button>
+    </div>
 
     <!-- Javascript -->
     <script type="text/javascript" src="lib/jquery.js"></script>
     <script type="text/javascript" src="lib/angular.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/meemaCtrl.js"></script>
+    <script type="text/javascript" src="js/meemaDeviceService.js"></script>
+    <script type="text/javascript" src="js/meemaWebService.js"></script>
 </body>
 </html>

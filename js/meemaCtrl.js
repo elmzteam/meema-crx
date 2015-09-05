@@ -4,14 +4,23 @@ angular.module('app').controller('meemaCtrl',
     ['$scope', 'meemaAuthService', 'meemaWebService',
     function ($scope, meemaAuthService, meemaWebService) {
         $scope.connected = false;
+        $scope.hasDevice = false;
+        $scope.accounts = [];
         $scope.authenticated = false;
         $scope.inputs = null;
         $scope.canSave = false;
         $scope.pageUrl = null;
         $scope.user = {};
+        $scope.loginUser = '';
+        $scope.loginPassword = '';
+        $scope.newUserUsername = '';
+        $scope.newUserPassword = '';
+        $scope.attemptingLogin = false;
+        $scope.attemptingNewUser = false;
         // TEST USER
         /* $scope.user = {
             hardware_id: 'abc',
+            username: '123',
             password: 'pw'
         }; */
 
@@ -19,6 +28,7 @@ angular.module('app').controller('meemaCtrl',
             getUrl(function(url) {
                 $scope.pageUrl = url;
                 var params = {
+                    username: $scope.user.username,
                     password: $scope.user.password,
                     hardware_id: $scope.user.hardware_id,
                     url: hashCode($scope.pageUrl)
@@ -51,6 +61,53 @@ angular.module('app').controller('meemaCtrl',
             }
         };
 
+        $scope.showLogin = function(user) {
+            console.log('showing login', user);
+            $scope.loginUser = user;
+            $scope.attemptingLogin = true;
+        };
+
+        $scope.cancelLogin = function() {
+            console.log('canceling login');
+            $scope.loginUser = '';
+            $scope.attemptingLogin = false;
+        };
+
+        $scope.login = function() {
+            console.log('logging in', $scope.loginUser, $scope.loginPassword);
+            authenticate({
+                username: $scope.loginUser,
+                password: $scope.loginPassword
+            });
+        };
+
+        $scope.showNewUser = function() {
+            $scope.attemptingNewUser = true;
+        };
+
+        $scope.cancelNewUser = function() {
+            $scope.attemptingNewUser = false;
+        };
+
+        $scope.newUser = function() {
+            console.log('creating new user', $scope.newUserUsername, $scope.newUserPassword);
+            if ($scope.accounts.indexOf($scope.newUserUsername) < 0) {
+                var newUser = {
+                    username: $scope.newUserUsername,
+                    password: $scope.newUserPassword
+                };
+                meemaAuthService.createAccount(newUser, function(error, res) {
+                    if (!error && res) {
+                        authenticate(newUser);
+                    } else {
+                        console.log('Error!', res.error);
+                    }
+                })
+            } else {
+                console.log('This username already exists');
+            }
+        };
+
         $scope.checkAccount = function(id) {
             meemaWebService.checkAccount({hardware_id: id}, function(error, data) {
                 console.log(data);
@@ -59,11 +116,88 @@ angular.module('app').controller('meemaCtrl',
 
         var onConnectionLoaded = function(error, res) {
             if (!error) {
-                console.log('started connection');
-                $scope.connected = true;
+                console.log('started connection', meemaAuthService.connectionLoaded);
+                $scope.connected = meemaAuthService.connectionLoaded;
+                meemaAuthService.getDevice(onGetDevice);
             } else {
                 console.log('Error!', res.error);
             }
+        };
+
+        var onGetDevice = function(error, res) {
+            if (!error) {
+                console.log('got device id', res);
+                $scope.hasDevice = true;
+                authenticate();
+            } else {
+                console.log('Error!', res.error);
+            }
+        };
+
+        var authenticate = function(account) {
+            console.log('authenticating', account);
+            if (account) {
+                meemaAuthService.authenticateAccount(account, function(error, res) {
+                   if (!error) {
+                       if (res) {
+                           $scope.user = account;
+                           $scope.authenticated = true;
+                       } else {
+                           getAccounts();
+                       }
+                   } else {
+                       console.log('Error!', res.error);
+                       getAccounts();
+                   }
+                });
+            } else {
+                meemaAuthService.isUnlocked(function(error, res) {
+                    if (!error) {
+                        if (res) {
+                            console.log('is unlocked');
+                            meemaAuthService.getActiveAccount(function(error, res) {
+                                if (!error) {
+                                    console.log('got active account, authenticated');
+                                    $scope.user = meemaAuthService.meemaActiveAccount;
+                                    $scope.authenticated = true;
+                                } else {
+                                    console.log('Error!', res.error);
+                                }
+                            });
+                        } else {
+                            console.log('is not unlocked');
+                            getAccounts();
+                        }
+                    } else {
+                        console.log('Error!', res.error);
+                        getAccounts();
+                    }
+                });
+            }
+        };
+
+        var getAccounts = function() {
+            console.log('getting accounts');
+            meemaAuthService.getAccounts(function(error, res) {
+                if (!error) {
+                    $scope.accounts = meemaAuthService.meemaAccounts;
+                } else {
+                    console.log('Error!', res.error);
+                }
+            })
+        };
+
+        var createAccount = function(account) {
+            meemaAuthService.createAccount(account, function(error, res) {
+                if (!error) {
+                    if (res) {
+                        console.log('created account!');
+                        authenticate(account);
+                    }
+                } else {
+                    console.log('Error!', res.error);
+                }
+            })
         };
 
         var getUrl = function(callback) {

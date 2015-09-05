@@ -12,7 +12,33 @@
     </div>
     <div id="authenticating" ng-show="connected && !authenticated">
         <div class="auth-container">
-            <h3>Authenticating Meema key</h3>
+            <div class="list" ng-hide="login && newuser">
+                <h3>Authenticate your Meema key</h3>
+                <div class="account" ng-repeat="user in accounts" ng-click="showLogin(user)">
+                    {{account.username}}
+                </div>
+                <button ng-click="showNewUser()">Create New User</button>
+            </div>
+            <div class="login" ng-show="attemptingLogin">
+                <label for="login_username">Username</label>
+                <input id="login_username" type="text" value="{{loginUser}}" disabled>
+                <label for="login_password">Password</label>
+                <input id="login_password" type="password" ng-model="loginPassword">
+                <div class="button-container">
+                    <button ng-click="cancelLogin()">Back</button>
+                    <button ng-click="login()">Login</button>
+                </div>
+            </div>
+            <div class="newuser" ng-show="attemptingNewUser">
+                <label for="newuser_username">Username</label>
+                <input id="newuser_username" type="text" ng-model="newUserUsername">
+                <label for="newuser_password">Password</label>
+                <input id="newuser_password" type="password" ng-model="newUserPassword">
+                <div class="button-container">
+                    <button ng-click="cancelNewUser()">Back</button>
+                    <button ng-click="newUser()">Create</button>
+                </div>
+            </div>
         </div>
     </div>
     <div id="authenticated" ng-if="authenticated" ng-init="initOptions()">

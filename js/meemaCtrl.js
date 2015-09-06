@@ -8,6 +8,7 @@ angular.module('app').controller('meemaCtrl',
         $scope.accounts = [];
         $scope.authenticated = false;
         $scope.inputs = null;
+        $scope.noInputs = true;
         $scope.canSave = false;
         $scope.pageUrl = null;
         $scope.user = {};
@@ -320,6 +321,11 @@ angular.module('app').controller('meemaCtrl',
                     console.log('returned from scrape', response);
                     $scope.$apply(function() {
                         $scope.inputs = response.data;
+                        if ($scope.inputs.length > 0) {
+                            $scope.noInputs = false;
+                        } else {
+                            $scope.noInputs = true;
+                        }
                         $scope.canSave = true;
                     });
                 });

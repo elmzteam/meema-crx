@@ -19,6 +19,15 @@ var getSelector = function(jqobject) {
     return selector;
 };
 
+var getOnlyOuterHTML = function(jqobject) {
+    return jqobject
+        .clone()
+        .children()
+        .remove()
+        .end()[0]
+        .outerHTML;
+};
+
 var getText = function(jqobject) {
     return jqobject
         .clone()
@@ -36,17 +45,32 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         console.log('forms', forms);
         var allInputs = [];
         for (var i = 0; i < forms.length; i++) {
-            var text = $('<div>').append($(forms[i]).clone()).html();
+            //var text = $('<div>').append($(forms[i]).clone()).html();
+            var text = getOnlyOuterHTML($(forms[i]));
             if (text.indexOf('login') >= 0 || text.indexOf('Login') >= 0) {
-                var ins = $(forms[i]).find("input[type='text'], input[type='password'], input[type='email'], input[type='number']");
+                var ins = $(forms[i]).find("input[type='text'], input[type='password'], input[type='email'], input[type='number'], input:not([type])");
                 for (var k = 0; k < ins.length; k++) {
                     allInputs.push(ins[k]);
                 }
-                console.log('found form with login text', allInputs);
+                console.log('found form with login text strict', allInputs);
             }
         }
+
         if (allInputs.length == 0) {
-            allInputs = $("form input[type='text'], form input[type='password'], form input[type='email'], form input[type='number']");
+            for (i = 0; i < forms.length; i++) {
+                text = $('<div>').append($(forms[i]).clone()).html();
+                if (text.indexOf('login') >= 0 || text.indexOf('Login') >= 0) {
+                    var ins = $(forms[i]).find("input[type='text'], input[type='password'], input[type='email'], input[type='number'], input:not([type])");
+                    for (var k = 0; k < ins.length; k++) {
+                        allInputs.push(ins[k]);
+                    }
+                    console.log('found form with login text loose', allInputs);
+                }
+            }
+        }
+
+        if (allInputs.length == 0) {
+            allInputs = $("form input[type='text'], form input[type='password'], form input[type='email'], form input[type='number'], input:not([type])");
             console.log('allinputs normal', allInputs);
         }
         var inputs = [];
@@ -72,19 +96,30 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         var response = [];
         for (i = 0; i < inputs.length; i++) {
             var selector = getSelector($(inputs[i]));
-            var name = getText($(labels[i]));
             var input_value = $(inputs[i]).val();
-            if (name == "") {
-                if (inputs[i].placeholder) {
-                    name = inputs[i].placeholder;
-                } else if (selector.indexOf('Username') >=0 || selector.indexOf('username') >= 0) {
-                    name = "Username";
-                } else if (selector.indexOf('Password') >=0 || selector.indexOf('password') >= 0) {
-                    name = "Password";
-                } else {
-                    name = "Input #" + i;
-                }
+            var name;
+            if (inputs[i].placeholder) {
+                name = inputs[i].placeholder;
+            } else if (getText($(labels[i])) != '') {
+                name = getText($(labels[i]));
+            } else if (selector.indexOf('Username') >=0 || selector.indexOf('username') >= 0) {
+                name = "Username";
+            } else if (selector.indexOf('Password') >=0 || selector.indexOf('password') >= 0) {
+                name = "Password";
+            } else if (getText($(inputs[i]).parent().prev()).indexOf('mail') >= 0 || getText($(inputs[i]).parent().prev()).indexOf('user') >= 0 || getText($(inputs[i]).parent().prev()).indexOf('User') >= 0) {
+                name = getText($(inputs[i]).parent().prev());
+            } else {
+                name = "Input #" + i;
             }
+
+            // Label Overrides
+            if (inputs[i].type == 'password') {
+                name = "Password";
+            }
+            if (inputs[i].type == 'email') {
+                name = "Email";
+            }
+
             response.push({
                 label: name,
                 selector: selector,

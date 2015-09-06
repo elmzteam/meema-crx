@@ -20,7 +20,8 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["lib/jquery.js", "js/scraper.js"]
+      "js": ["lib/jquery.js", "js/scraper.js"],
+      "all_frames": true
     }
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"

@@ -69,8 +69,12 @@
                         ng-click="inputs[$index].save = true">
             </md-input-container>
         </div>
-        <div class="save-button-container">
+        <div class="save-button-container" ng-hide="noInputs">
             <md-button class="save-button" ng-click="save()">Save</md-button>
+        </div>
+        <div class="no-input" ng-show="noInputs">
+            <img class="meema-icon" src="img/meema1024.png">
+            <p><b>No inputs discovered.</b></p>
         </div>
     </div>
 

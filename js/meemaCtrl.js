@@ -40,12 +40,13 @@ angular.module('app').controller('meemaCtrl',
                     if (!error) {
                         if (exists) {
                             console.log('page exists in memory', data);
+                            $scope.noInputs = false;
                             handleData(data, function(processedData) {
                                 console.log('finished handling data', processedData);
                                 $scope.$apply(function() {
                                     $scope.inputs = processedData;
                                 });
-                                fillPage($scope.inputs);
+                                fillPage(angular.copy($scope.inputs));
                             });
                         } else {
                             console.log('page does not exist in memory');
@@ -97,11 +98,12 @@ angular.module('app').controller('meemaCtrl',
             var cloud = [];
             var edison = '';
             for (var i = 0; i < inputs.length; i++) {
-                cloud.push(inputs[i]);
+                cloud.push(angular.copy((function(i) {return i})(inputs[i])));
                 if (inputs[i].type == 'password') {
                     var encrypt = meemaCryptoService.encrypt(cloud[i].input_value);
                     cloud[i].fragment = encrypt[0]; //Store xored portion for cloud
                     edison = encrypt[1]; //Store rand portion for Edison
+                    cloud[i].input_value = '';
                 }
             }
             return {cloud: cloud, edison: edison};
@@ -111,10 +113,11 @@ angular.module('app').controller('meemaCtrl',
             for (var i = 0; i < data.length; i++) {
                 (function(i) {
                     if (data[i].type == 'password') {
-                        meemaAuthService.fetchFragment($scope.pageUrl, function (error, res) {
+                        meemaAuthService.fetchFragment(hashCode($scope.pageUrl), function (error, res) {
                             if (!error) {
                                 console.log('got other frag and decrypting', meemaCryptoService.decrypt(data[i].fragment, res))
-                                callback(meemaCryptoService.decrypt(data[i].fragment, res));
+                                data[i].input_value = meemaCryptoService.decrypt(data[i].fragment, res);
+                                callback(data);
                             } else {
                                 console.log('Error!', res.error);
                             }

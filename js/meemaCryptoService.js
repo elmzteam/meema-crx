@@ -3,19 +3,18 @@ angular.module('app').service('meemaCryptoService',
     function ($rootScope) {
 
         this.encrypt = function(password) {
-            var b64 = btoa(password);
-            var bin = stringToBinary(b64);
+            var bin = stringToBinary(password);
             var rand = getRandomBitstream(bin.length);
             var xored = xor(bin, rand);
-            return [binaryToString(xored), binaryToString(rand)];
+            return [btoa(binaryToString(xored)), btoa(binaryToString(rand))];
         };
 
         this.decrypt = function(frag1, frag2) {
-            var bit1 = stringToBinary(frag1);
-            var bit2 = stringToBinary(frag2);
+            console.log('frags', frag1, frag2);
+            var bit1 = stringToBinary(atob(frag1));
+            var bit2 = stringToBinary(atob(frag2));
             var xored = xor(bit1, bit2);
-            var b64 = binaryToString(xored);
-            return atob(b64);
+            return binaryToString(xored);
         };
 
         var getRandomBitstream = function(length) {

@@ -12,6 +12,7 @@
   },
   "permissions": [
     "activeTab",
+    "management",
     "tabs",
     "http://*/*",
     "https://*/*",

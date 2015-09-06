@@ -69,6 +69,7 @@ angular.module('app').controller('meemaCtrl',
                     url: hashCode($scope.pageUrl),
                     store: store.cloud
                 };
+                console.log('saving', params);
                 meemaWebService.putPage(params, function(error) {
                     console.log(error ? 'Error!' : 'Saved frag to cloud!');
                 });

@@ -54,6 +54,7 @@ angular.module('app').controller('meemaCtrl',
         $scope.save = function() {
             if ($scope.canSave) {
                 fillPage($scope.inputs);
+                console.log('user before save', $scope.user);
                 var params = {
                     username: $scope.user.username,
                     password: $scope.user.password,
@@ -61,6 +62,7 @@ angular.module('app').controller('meemaCtrl',
                     url: hashCode($scope.pageUrl),
                     store: $scope.inputs
                 };
+                console.log('saving', params);
                 meemaWebService.putPage(params, function(error) {
                     console.log(error ? 'Error!' : 'Success!');
                 });

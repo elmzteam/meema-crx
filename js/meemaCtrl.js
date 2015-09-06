@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('app').controller('meemaCtrl',
-    ['$scope', 'meemaAuthService', 'meemaWebService',
-    function ($scope, meemaAuthService, meemaWebService) {
+    ['$scope', 'meemaAuthService', 'meemaWebService', 'meemaCryptoService',
+    function ($scope, meemaAuthService, meemaWebService, meemaCryptoService) {
         $scope.connected = false;
         $scope.hasDevice = false;
         $scope.accounts = [];

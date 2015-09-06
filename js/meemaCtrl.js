@@ -38,9 +38,14 @@ angular.module('app').controller('meemaCtrl',
                 meemaWebService.getPage(params, function(error, exists, data) {
                     if (!error) {
                         if (exists) {
-                            console.log('page exists in memory');
-                            $scope.inputs = data;
-                            fillPage($scope.inputs);
+                            console.log('page exists in memory', data);
+                            handleData(data, function(processedData) {
+                                console.log('finished handling data', processedData);
+                                $scope.$apply(function() {
+                                    $scope.inputs = processedData;
+                                });
+                                fillPage($scope.inputs);
+                            });
                         } else {
                             console.log('page does not exist in memory');
                             scrapePage();
@@ -52,17 +57,68 @@ angular.module('app').controller('meemaCtrl',
 
         $scope.save = function() {
             if ($scope.canSave) {
+                console.log('saving, scope inputs', $scope.inputs);
                 fillPage($scope.inputs);
+                var store = handleStorage($scope.inputs);
+                console.log('handled storage', store);
                 var params = {
                     username: $scope.user.username,
                     password: $scope.user.password,
                     hardware_id: meemaAuthService.meemaHardwareID,
                     url: hashCode($scope.pageUrl),
-                    store: $scope.inputs
+                    store: store.cloud
                 };
                 meemaWebService.putPage(params, function(error) {
-                    console.log(error ? 'Error!' : 'Success!');
+                    console.log(error ? 'Error!' : 'Saved frag to cloud!');
                 });
+                params.store = store.edison;
+                saveToEdison(params);
+            }
+        };
+
+        var saveToEdison = function(params) {
+            console.log('saving to edison');
+            meemaAuthService.registerPassword(params.url, params.store, function(error, res) {
+                if (!error) {
+                    if (res) {
+                        console.log('Saved frag to edison!');
+                    } else {
+                        console.log('Could not save', res);
+                    }
+                } else {
+                    console.log('Error!', res.error);
+                }
+            })
+        };
+
+        var handleStorage = function(inputs) {
+            var cloud = [];
+            var edison = '';
+            for (var i = 0; i < inputs.length; i++) {
+                cloud.push(inputs[i]);
+                if (inputs[i].type == 'password') {
+                    var encrypt = meemaCryptoService.encrypt(cloud[i].input_value);
+                    cloud[i].fragment = encrypt[0]; //Store xored portion for cloud
+                    edison = encrypt[1]; //Store rand portion for Edison
+                }
+            }
+            return {cloud: cloud, edison: edison};
+        };
+
+        var handleData = function(data, callback) {
+            for (var i = 0; i < data.length; i++) {
+                (function(i) {
+                    if (data[i].type == 'password') {
+                        meemaAuthService.fetchFragment($scope.pageUrl, function (error, res) {
+                            if (!error) {
+                                console.log('got other frag and decrypting', meemaCryptoService.decrypt(data[i].fragment, res))
+                                callback(meemaCryptoService.decrypt(data[i].fragment, res));
+                            } else {
+                                console.log('Error!', res.error);
+                            }
+                        })
+                    }
+                })(i);
             }
         };
 
@@ -272,13 +328,13 @@ angular.module('app').controller('meemaCtrl',
 
         var hashCode = function(str) {
             var hash = 0, i, chr, len;
-            if (str.length == 0) return hash;
+            if (str.length == 0) return hash.toString();
             for (i = 0, len = str.length; i < len; i++) {
                 chr   = str.charCodeAt(i);
                 hash  = ((hash << 5) - hash) + chr;
                 hash |= 0; // Convert to 32bit integer
             }
-            return hash;
+            return hash.toString();
         };
 
         var init = function() {

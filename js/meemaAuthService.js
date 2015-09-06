@@ -30,7 +30,7 @@ angular.module('app').service('meemaAuthService',
         this.getDevice = function(callback) {
             console.log('authservice get device');
             chrome.runtime.sendMessage(this.meemaAppID, {command: 'getDeviceUID', args: []}, {}, function(res) {
-                console.log(arguments);
+                console.log('in get device callback', res);
                 if (!res.error) {
                     this.meemaHardwareID = res.result;
                     callback(null, this.meemaHardwareID);
@@ -90,7 +90,9 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.fetchFragment = function(hashedUrl, callback) {
+            console.log('authservice fetching fragment');
             chrome.runtime.sendMessage(this.meemaAppID, {command: 'fetchFragment', args: [hashedUrl]}, {}, function(res) {
+                console.log('callback fetched fragment', res);
                 if (!res.error) {
                     callback(null, res.result);
                 } else {
@@ -122,8 +124,10 @@ angular.module('app').service('meemaAuthService',
         };
 
         this.registerPassword = function(hashedUrl, pwdFrag, callback) {
+            console.log('authservice registering password', hashedUrl, pwdFrag);
             chrome.runtime.sendMessage(this.meemaAppID,
                 {command: 'registerPassword', args: [hashedUrl, pwdFrag]}, {}, function(res) {
+                    console.log('register password callback', res);
                     if (!res.error) {
                         callback(null, res.result);
                     } else {

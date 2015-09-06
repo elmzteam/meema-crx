@@ -2,9 +2,11 @@ angular.module('app').service('meemaWebService',
     ['$rootScope', '$http',
     function ($rootScope, $http) {
         this.getPage = function(params, callback) {
+            console.log('webservice getting page');
             $http({method: 'POST', url: 'http://www.meema.co/' + params.hardware_id + '/' + params.username + '/' + params.url,
                 data: {password: params.password}})
                 .success((function(data, status, headers, config) {
+                    console.log('get page success', data);
                     callback(null, true, data);
                 }).bind(this))
                 .error(function(data, status, headers, config) {

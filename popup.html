@@ -32,9 +32,20 @@
                         <input ng-value="loginUser" ng-model="loginUser" disabled>
                     </md-input-container>
                     <md-input-container class="login-input">
+                        <label>Auth Type</label>
+                        <md-select ng-model="loginAuthType">
+                            <md-option value="password">Password</md-option>
+                            <md-option value="phone">Phone</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container class="login-input" ng-show="loginAuthType == 'password'">
                         <label>Password</label>
                         <input type="password" ng-model="loginPassword">
                     </md-input-container>
+                    <div class="login-input" ng-if="loginAuthType == 'phone'" ng-init="callPhone()">
+                        <h4 ng-hide="loginAuthedPhone">Waiting for phone authentication...</h4>
+                        <h4 ng-show="loginAuthedPhone" style="color: green;">Authenicated with phone!</h4>
+                    </div>
                 </md-content>
                 <div class="login-button-container">
                     <md-button class="back-button" ng-click="cancelLogin()">Back</md-button>
@@ -45,16 +56,27 @@
                 <md-content layout-padding layout="column" class="newuser-input-container">
                     <md-input-container class="newuser-input">
                         <label>Username</label>
-                        <input ng-model="newUserUsername">
+                        <input ng-model="newUserUsername" ng-disabled="newUserAuthType == 'phone'">
                     </md-input-container>
                     <md-input-container class="newuser-input">
+                        <label>Auth Type</label>
+                        <md-select ng-model="newUserAuthType">
+                            <md-option value="password">Password</md-option>
+                            <md-option value="phone">Phone</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container class="newuser-input" ng-show="newUserAuthType == 'password'">
                         <label>Password</label>
                         <input type="password" ng-model="newUserPassword">
                     </md-input-container>
+                    <div class="newuser-input" ng-if="newUserAuthType == 'phone'" ng-init="getPhoneUrl()">
+                        <h4 ng-hide="newUserAuthedPhone">{{newUserPhoneUrl}}</h4>
+                        <h4 style="color: green;" ng-show="newUserAuthedPhone">Registered phone!</h4>
+                    </div>
                 </md-content>
                 <div class="newuser-button-container">
                     <md-button class="back-button" ng-click="cancelNewUser()">Back</md-button>
-                    <md-button class="create-button" ng-click="newUser()">Create</md-button>
+                    <md-button class="create-button" ng-click="newUser()" ng-disabled="newUserAuthType == 'password' || newUserAuthedPhone">Create</md-button>
                 </div>
             </div>
         </div>

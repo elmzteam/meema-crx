@@ -13,9 +13,13 @@ angular.module('app').controller('meemaCtrl',
         $scope.pageUrl = null;
         $scope.user = {};
         $scope.loginUser = '';
+        $scope.loginAuthType = '';
         $scope.loginPassword = '';
+        $scope.loginAuthedPhone = false;
         $scope.newUserUsername = '';
+        $scope.newUserAuthType = '';
         $scope.newUserPassword = '';
+        $scope.newUserAuthedPhone = false;
         $scope.attemptingLogin = false;
         $scope.attemptingNewUser = false;
         // TEST USER
@@ -56,6 +60,76 @@ angular.module('app').controller('meemaCtrl',
                 });
             });
         };
+
+        $scope.getPhoneUrl = function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://meemapush.com/new")
+            xhr.setRequestHeader("Content-Type","application/json");
+            xhr.send(JSON.stringify({
+                user: $scope.newUserUsername,
+                device: meemaAuthService.meemaHardwareID
+            }))
+            xhr.onload = function() {
+                $scope.newUserPhoneUrl = "https://meemapush.com/signup/"+xhr.response;
+                var time = window.setInterval(function() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "https://meemapush.com/status")
+                    xhr.setRequestHeader("Content-Type","application/json");
+                    xhr.send(JSON.stringify({
+                        user: $scope.newUserUsername,
+                        device: meemaAuthService.meemaHardwareID
+                    }))
+                    xhr.onload = function() {
+                        var res = JSON.parse(xhr.response);
+                        if (res.valid) {
+                            clearInterval(time);
+                            $scope.$apply(function() {
+                                $scope.newUserPassword= res.result;
+                                $scope.newUserAuthedPhone = true;
+                                $scope.newUser();
+                                console.log('authed wiht phone');
+                            });
+                        }
+                    }
+                }, 1000)
+            }
+        };
+
+        $scope.callPhone = function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://meemapush.com/query")
+            xhr.setRequestHeader("Content-Type","application/json");
+            xhr.send(JSON.stringify({
+                user: $scope.loginUser,
+                device: meemaAuthService.meemaHardwareID
+            }))
+            xhr.onload = function() {
+                var time = window.setInterval(function() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "https://meemapush.com/status")
+                    xhr.setRequestHeader("Content-Type","application/json");
+                    xhr.send(JSON.stringify({
+                        user: $scope.loginUser,
+                        device: meemaAuthService.meemaHardwareID
+                    }))
+                    xhr.onload = function() {
+                        var res = JSON.parse(xhr.response);
+                        console.log('onload', res);
+                        if (res.valid) {
+                            console.log('res is valid');
+                            clearInterval(time);
+                            $scope.$apply(function() {
+                                $scope.loginPassword= res.result;
+                                $scope.loginAuthedPhone = true;
+                                $scope.authenticated = true;
+                                console.log('login with phone');
+                            });
+                        }
+                    }
+                }, 1000)
+            }
+
+        }
 
         $scope.save = function() {
             if ($scope.canSave) {

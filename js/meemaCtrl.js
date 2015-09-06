@@ -3,17 +3,17 @@
 angular.module('app').controller('meemaCtrl',
     ['$scope', 'meemaAuthService', 'meemaWebService', 'meemaCryptoService',
     function ($scope, meemaAuthService, meemaWebService, meemaCryptoService) {
-        $scope.connected = false;
-        $scope.hasDevice = false;
-        $scope.accounts = [];
-        $scope.authenticated = false;
+        $scope.connected = true;
+        $scope.hasDevice = true;
+        $scope.accounts = ['Zach', 'Lucas', 'Matthew', 'Ellis'];
+        $scope.authenticated = true;
         $scope.inputs = null;
         $scope.noInputs = true;
         $scope.canSave = false;
         $scope.pageUrl = null;
         $scope.user = {};
-        $scope.loginUser = '';
-        $scope.loginPassword = '';
+        $scope.loginUser = 'Zach';
+        $scope.loginPassword = 'asdf';
         $scope.newUserUsername = '';
         $scope.newUserPassword = '';
         $scope.attemptingLogin = false;

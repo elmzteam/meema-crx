@@ -3,7 +3,7 @@ angular.module('app').service('meemaAuthService',
     function ($rootScope) {
 
         this.meemaAppID = '';
-        this.meemaHardwareID = '';
+        this.meemaHardwareID = 'qwertyuiop';
         this.meemaActiveAccount = '';
         this.meemaAccounts = [];
         this.meemaFragmentList = [];

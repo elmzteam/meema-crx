@@ -3,16 +3,17 @@
 angular.module('app').controller('meemaCtrl',
     ['$scope', 'meemaAuthService', 'meemaWebService',
     function ($scope, meemaAuthService, meemaWebService) {
-        $scope.connected = false;
-        $scope.hasDevice = false;
-        $scope.accounts = [];
-        $scope.authenticated = false;
+        $scope.connected = true;
+        $scope.hasDevice = true;
+        $scope.accounts = ['Lucas'];
+        $scope.authenticated = true;
         $scope.inputs = null;
+        $scope.noInputs = true;
         $scope.canSave = false;
         $scope.pageUrl = null;
         $scope.user = {};
-        $scope.loginUser = '';
-        $scope.loginPassword = '';
+        $scope.loginUser = 'Lucas';
+        $scope.loginPassword = 'testo';
         $scope.newUserUsername = '';
         $scope.newUserPassword = '';
         $scope.attemptingLogin = false;
@@ -264,6 +265,11 @@ angular.module('app').controller('meemaCtrl',
                     console.log('returned from scrape', response);
                     $scope.$apply(function() {
                         $scope.inputs = response.data;
+                        if ($scope.inputs.length > 0) {
+                            $scope.noInputs = false;
+                        } else {
+                            $scope.noInputs = true;
+                        }
                         $scope.canSave = true;
                     });
                 });

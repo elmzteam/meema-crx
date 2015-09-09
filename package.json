@@ -1,0 +1,22 @@
+{
+  "name": "meema-crx",
+  "version": "1.0.0",
+  "description": "Portable password security made easy - chrome extension",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elmzteam/meema-crx.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/elmzteam/meema-crx/issues"
+  },
+  "homepage": "https://github.com/elmzteam/meema-crx#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-sass": "^2.0.4"
+  }
+}

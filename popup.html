@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>Meema</title>
+    <link rel="stylesheet" href="lib/angular-material.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+</head>
+<body ng-controller="meemaCtrl">
+    <div id="not-authenticated" ng-hide="connected || authenticated">
+        <img class='meema-icon' src="img/meema1024.png">
+        <p><b>Please plug in and authenticate your Meema key.</b></p>
+    </div>
+    <div id="authenticating" ng-show="connected && !authenticated">
+        <div class="auth-container">
+            <div class="list" ng-hide="attemptingLogin || attemptingNewUser">
+                <h1>Login</h1>
+                <md-list>
+                    <md-list-item class="md-2-line user" ng-repeat="user in accounts" ng-click="showLogin(user)">
+                        <div class="md-list-item-text text">
+                            <h4>{{user}}</h4>
+                        </div>
+                    </md-list-item>
+                </md-list>
+                <md-button class="new-user-button" ng-click="showNewUser()">Create New User</md-button>
+            </div>
+            <div class="login" ng-show="attemptingLogin">
+                <md-content layout-padding layout="column" class="login-input-container">
+                    <md-input-container class="login-input">
+                        <label>Username</label>
+                        <input ng-value="loginUser" ng-model="loginUser" disabled>
+                    </md-input-container>
+                    <md-input-container class="login-input">
+                        <label>Password</label>
+                        <input type="password" ng-model="loginPassword">
+                    </md-input-container>
+                </md-content>
+                <div class="login-button-container">
+                    <md-button class="back-button" ng-click="cancelLogin()">Back</md-button>
+                    <md-button class="login-button" ng-click="login()">Login</md-button>
+                </div>
+            </div>
+            <div class="newuser" ng-show="attemptingNewUser">
+                <md-content layout-padding layout="column" class="newuser-input-container">
+                    <md-input-container class="newuser-input">
+                        <label>Username</label>
+                        <input ng-model="newUserUsername">
+                    </md-input-container>
+                    <md-input-container class="newuser-input">
+                        <label>Password</label>
+                        <input type="password" ng-model="newUserPassword">
+                    </md-input-container>
+                </md-content>
+                <div class="newuser-button-container">
+                    <md-button class="back-button" ng-click="cancelNewUser()">Back</md-button>
+                    <md-button class="create-button" ng-click="newUser()">Create</md-button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="authenticated" ng-if="authenticated" ng-init="initOptions()" layout="column">
+        <div class="input-container" ng-repeat="input in inputs" layout="row">
+            <md-switch ng-model="inputs[$index].save" aria-label="Save"></md-switch>
+            <md-input-container class="input-input">
+                <label>{{input.label}}</label>
+                <input type="{{input.type}}" ng-model="inputs[$index].input_value"
+                        ng-disabled="!inputs[$index].save && inputs[$index].input_value != ''"
+                        ng-click="inputs[$index].save = true">
+            </md-input-container>
+        </div>
+        <div class="save-button-container" ng-hide="noInputs">
+            <md-button class="save-button" ng-click="save()">Save</md-button>
+        </div>
+        <div class="no-input" ng-show="noInputs">
+            <img class="meema-icon" src="img/meema1024.png">
+            <p><b>No inputs discovered.</b></p>
+        </div>
+    </div>
+
+    <!-- Javascript -->
+    <script type="text/javascript" src="lib/jquery.js"></script>
+    <script type="text/javascript" src="lib/angular.js"></script>
+    <script type="text/javascript" src="lib/angular-animate.js"></script>
+    <script type="text/javascript" src="lib/angular-aria.js"></script>
+    <script type="text/javascript" src="lib/angular-material.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/meemaCtrl.js"></script>
+    <script type="text/javascript" src="js/meemaAuthService.js"></script>
+    <script type="text/javascript" src="js/meemaWebService.js"></script>
+</body>
+</html>
